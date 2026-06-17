@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using SteamClone.Api.Models;
 
 namespace SteamClone.Api.Data;
@@ -14,11 +15,15 @@ public class GameService
 
     public async Task<List<Game>> GetAllAsync()
     {
+
         return await _games.Find(_ => true).ToListAsync();
     }
 
     public async Task<Game?> GeyByIdAsync(string id)
     {
+        if (!ObjectId.TryParse(id, out _))
+            return null;
+
         return await _games.Find(x=> x.Id == id).FirstOrDefaultAsync();
     }
 
