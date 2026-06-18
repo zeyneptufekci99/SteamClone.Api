@@ -19,7 +19,7 @@ public class GameService
         return await _games.Find(_ => true).ToListAsync();
     }
 
-    public async Task<Game?> GeyByIdAsync(string id)
+    public async Task<Game?> GetByIdAsync(string id)
     {
         if (!ObjectId.TryParse(id, out _))
             return null;

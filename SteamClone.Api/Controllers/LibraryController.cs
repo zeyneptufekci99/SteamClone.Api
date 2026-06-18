@@ -31,7 +31,7 @@ public class LibraryController: ControllerBase
             return Unauthorized();
         }
 
-        var game = await _gameService.GeyByIdAsync(gameId);
+        var game = await _gameService.GetByIdAsync(gameId);
         if(game == null)
         {
             return NotFound("Game not found");
@@ -48,5 +48,35 @@ public class LibraryController: ControllerBase
         await _libraryService.AddGameToLibraryAsync(userId, gameId);
 
         return Ok("Game purchased successfully");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMyLibrary()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if(userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var userGames = await _libraryService.GetUserLibraryAsync(userId);
+        var games = new List<object>();
+
+        foreach (var userGame in userGames)
+        {
+            var game = await _gameService.GetByIdAsync(userGame.GameId);
+            if(game != null)
+            {
+                games.Add(new
+                {
+                    game.Id,
+                    game.Name,
+                    game.Description,
+                    game.Price,
+                    game.CoverImageUrl
+                });
+            }
+        }
+        return Ok(games);
     }
 }

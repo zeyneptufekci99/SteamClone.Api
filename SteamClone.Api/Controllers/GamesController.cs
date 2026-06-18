@@ -26,7 +26,7 @@ public class GamesController: ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var game = await _gameService.GeyByIdAsync(id);
+        var game = await _gameService.GetByIdAsync(id);
         if (game == null)
             return NotFound("Game not found");
         return Ok(game);
@@ -50,7 +50,7 @@ public class GamesController: ControllerBase
     [HttpDelete]
     public async Task<IActionResult> Delete(string id)
     {
-        var game = await _gameService.GeyByIdAsync(id);
+        var game = await _gameService.GetByIdAsync(id);
         if (game == null)
             return NotFound("Game not found");
         await _gameService.DeleteAsync(id);
