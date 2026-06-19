@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using SteamClone.Api.DTOs;
 using SteamClone.Api.Models;
 
 namespace SteamClone.Api.Data;
@@ -24,7 +25,7 @@ public class GameService
         if (!ObjectId.TryParse(id, out _))
             return null;
 
-        return await _games.Find(x=> x.Id == id).FirstOrDefaultAsync();
+        return await _games.Find(x => x.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task CreateAsync(Game game)
@@ -32,8 +33,25 @@ public class GameService
         await _games.InsertOneAsync(game);
     }
 
-    public  async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id)
     {
         await _games.DeleteOneAsync(x => x.Id == id);
     }
- }
+
+    public async Task<bool> UpdateAsync(string id, UpdateGameRequest request)
+    {
+        var existingGame = await GetByIdAsync(id);
+
+        if (existingGame == null)
+        {
+            return false;
+        }
+
+        existingGame.Name = request.Name;
+        existingGame.Description = request.Description;
+        existingGame.Price = request.Price;
+        existingGame.CoverImageUrl = request.CoverImage;
+        await _games.ReplaceOneAsync(x => x.Id == id, existingGame);
+        return true;
+    }
+}

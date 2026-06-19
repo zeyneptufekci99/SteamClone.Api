@@ -57,4 +57,23 @@ public class GamesController: ControllerBase
         return Ok("Game deleted successfully");
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, UpdateGameRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Name)){
+            return BadRequest("Game name is required");
+        }
+        if(request.Price < 0)
+        {
+            return BadRequest("Price cannot be negative");
+        }
+        var updated = await _gameService.UpdateAsync(id, request);
+
+        if (!updated)
+        {
+            return NotFound("Game not Found");
+        }
+
+        return Ok("Game updated successfully");
+    }
 }
