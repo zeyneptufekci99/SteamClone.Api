@@ -68,4 +68,25 @@ public class ReviewController: ControllerBase
 
         return Ok("Review created successfully");
     }
+
+    [HttpGet("game/{gameId}")]
+    public async Task<IActionResult> GetGameById(string gameId)
+    {
+        var reviews = await _reviewService.GetByGameIdAsync(gameId);
+
+        return Ok(reviews);
+    }
+
+    [HttpGet("game/{gameId}/summary")]
+    public async Task<IActionResult> GetSummary(string gameId)
+    {
+        var averageRating = await _reviewService.GetAverageRatingAsync(gameId);
+        var reviewCount = await _reviewService.GetReviewCount(gameId);
+
+        return Ok(new GameReviewSummaryResponse
+        {
+            AverageRating = averageRating,
+            ReviewCount = reviewCount
+        });
+    }
 }

@@ -25,4 +25,21 @@ public class ReviewService
     {
         return await _reviews.Find(x => x.UserId == userId && x.GameId == gameId).AnyAsync();
     }
+
+    public async Task<double> GetAverageRatingAsync(string gameId) {
+
+        var reviews = await _reviews.Find(x => x.GameId == gameId).ToListAsync();
+
+        if (reviews.Any())
+        {
+            return 0;
+        }
+
+        return reviews.Average(x => x.Rating);
+    }
+
+    public async Task<int> GetReviewCount(string gameId)
+    {
+        return (int)await _reviews.CountDocumentsAsync(x=> x.GameId == gameId);
+    }
 }

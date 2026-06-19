@@ -18,6 +18,7 @@ builder.Services.AddSingleton<JwtService>();
 builder.Services.AddSingleton<GameService>();
 builder.Services.AddSingleton<LibraryService>();
 builder.Services.AddSingleton<ReviewService>();
+builder.Services.AddSingleton<WishlistService>();
 // Controllers
 builder.Services.AddControllers();
 
