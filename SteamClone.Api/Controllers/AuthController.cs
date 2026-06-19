@@ -60,11 +60,17 @@ public class AuthController: ControllerBase
             return Unauthorized("Invalid credentials");
         }
 
-        var token = _jwtService.GenerateToken(user);
+       
+        var accessToken = _jwtService.GenerateToken(user);
+        var refreshToken = _jwtService.GenerateRefreshToken();
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
+        await _userService.UpdateAsync(user.Id, user);
         return Ok(new
         {
-            token
+            accessToken,
+            refreshToken
         });
     }
 
@@ -93,7 +99,36 @@ public class AuthController: ControllerBase
         return Convert.ToBase64String(hash);
     }
 
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh(RefreshTokenRequest request)
+    {
+        var user = await _userService.GetByRefreshTokenAsync(request.RefreshToken);
+        if (user == null)
+        {
+            return Unauthorized("Invalid refresh token");
 
+        }
+
+        if(user.RefreshTokenExpiryTime<= DateTime.UtcNow)
+        {
+            return Unauthorized("Refresh token expired");
+        }
+
+        var newAccessToken = _jwtService.GenerateToken(user);
+        var newRefreshToken = _jwtService.GenerateRefreshToken();
+       
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow;
+
+        await _userService.UpdateAsync(user.Id, user);
+
+        return Ok(new
+        {
+            accessToken = newAccessToken,
+            refreshToken = newRefreshToken
+        });
+
+    }
  
 
 }

@@ -22,4 +22,14 @@ public class UserService
     {
         return await _user.Find(x=> x.Email == email).FirstOrDefaultAsync();
     }
+
+    public async Task UpdateAsync(string id, User user)
+    {
+        await _user.ReplaceOneAsync(x => x.Id == id, user);
+    }
+
+    public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+    {
+        return await _user.Find(x => x.RefreshToken == refreshToken).FirstOrDefaultAsync();
+    }
 }
