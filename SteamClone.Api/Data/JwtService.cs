@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using SteamClone.Api.Models;
 
+
 namespace SteamClone.Api.Data;
 
 public class JwtService
@@ -28,7 +29,9 @@ public class JwtService
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Email, user.Email)
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
+
         };
 
         var token= new JwtSecurityToken(

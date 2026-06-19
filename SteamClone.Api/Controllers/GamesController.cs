@@ -2,6 +2,7 @@
 using SteamClone.Api.Data;
 using SteamClone.Api.DTOs;
 using SteamClone.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SteamClone.Api.Controllers;
 
@@ -31,7 +32,7 @@ public class GamesController: ControllerBase
             return NotFound("Game not found");
         return Ok(game);
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateGameRequest request)
     {
@@ -47,6 +48,7 @@ public class GamesController: ControllerBase
         return Ok(game);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete]
     public async Task<IActionResult> Delete(string id)
     {
@@ -57,6 +59,7 @@ public class GamesController: ControllerBase
         return Ok("Game deleted successfully");
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(string id, UpdateGameRequest request)
     {
