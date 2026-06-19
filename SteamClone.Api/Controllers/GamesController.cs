@@ -18,7 +18,7 @@ public class GamesController: ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10, string? search = null, string? sortBy = "name", string? sortDirection = "asc")
     {
 
        if(page < 1)
@@ -26,13 +26,18 @@ public class GamesController: ControllerBase
             return BadRequest("Page number must be greater than 0");
         }
 
-       var totalCount = await _gameService.GetCountAsync();
-       var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+        if (sortDirection != "asc" && sortDirection != "desc")
+            return BadRequest("Sort direction must be asc or desc");
+
+        var totalCount = await _gameService.GetFilteredCountAsync(search);
+        var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
         if (page > totalPages && totalCount > 0)
             return BadRequest("Page exceeds total page count");
 
-        var games = await _gameService.GetPagedAsync(page, pageSize);
+     
+
+        var games = await _gameService.GetPagedAsync(page, pageSize, search, sortBy, sortDirection);
 
         return Ok(new PaginationResponse<Game>
         {

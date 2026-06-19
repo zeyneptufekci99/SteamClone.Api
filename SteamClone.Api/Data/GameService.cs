@@ -60,9 +60,40 @@ public class GameService
         return await _games.CountDocumentsAsync(_ => true);
     }
 
-    public async Task<List<Game>> GetPagedAsync(int page, int pageSize)
+    public async Task<List<Game>> GetPagedAsync(int page, int pageSize, string? search, string? sortBy, string sortDirection)
     {
-        return await _games.Find(_=> true).Skip((page-1)*pageSize).Limit(pageSize).ToListAsync();
+        var filter = Builders<Game>.Filter.Empty;
+        if(!string.IsNullOrWhiteSpace(search))
+        {
+            filter = Builders<Game>.Filter.Regex(
+                x => x.Name, new MongoDB.Bson.BsonRegularExpression(search, "i"));
+        }
+
+        var query = _games.Find(filter);
+        var isDescending = sortDirection?.ToLower() == "desc";
+
+        query = sortBy?.ToLower() switch
+        {
+            "name" => isDescending ? query.SortByDescending(x => x.Name) : query.SortBy(x => x.Name),
+            "price" => isDescending ? query.SortByDescending(x => x.Price) : query.SortBy(x => x.Price),
+
+            _ => query.SortBy(x => x.Name)
+        };
+
+
+        return await query.Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync();
     }
 
+    public async Task<long> GetFilteredCountAsync(string? search)
+    {
+        var filter = Builders<Game>.Filter.Empty;
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            filter = Builders<Game>.Filter.Regex(
+                x => x.Name, new MongoDB.Bson.BsonRegularExpression(search, "i"));
+        }
+
+        return await _games.CountDocumentsAsync(filter);
+    }
 }
