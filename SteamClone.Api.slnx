@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="SteamClone.Api/SteamClone.Api.csproj" />
+  <Folder Name="/Çözüm Öğeleri/">
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Project Path="../../../../../../source/repos/SteamClone.Api/SteamClone.Api/SteamClone.Api.csproj" />
 </Solution>

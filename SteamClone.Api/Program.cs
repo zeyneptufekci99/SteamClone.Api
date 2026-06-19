@@ -82,7 +82,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler("/error");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 // Authentication & Authorization
 app.UseAuthentication();
