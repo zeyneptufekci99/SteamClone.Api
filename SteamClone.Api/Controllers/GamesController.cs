@@ -18,10 +18,29 @@ public class GamesController: ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
     {
-        var games = await _gameService.GetAllAsync();
-        return Ok(games);
+
+       if(page < 1)
+        {
+            return BadRequest("Page number must be greater than 0");
+        }
+
+       var totalCount = await _gameService.GetCountAsync();
+       var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+        if (page > totalPages && totalCount > 0)
+            return BadRequest("Page exceeds total page count");
+
+        var games = await _gameService.GetPagedAsync(page, pageSize);
+
+        return Ok(new PaginationResponse<Game>
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            Data = games
+        });
     }
 
     [HttpGet("{id}")]

@@ -54,4 +54,15 @@ public class GameService
         await _games.ReplaceOneAsync(x => x.Id == id, existingGame);
         return true;
     }
+
+    public async Task<long> GetCountAsync()
+    {
+        return await _games.CountDocumentsAsync(_ => true);
+    }
+
+    public async Task<List<Game>> GetPagedAsync(int page, int pageSize)
+    {
+        return await _games.Find(_=> true).Skip((page-1)*pageSize).Limit(pageSize).ToListAsync();
+    }
+
 }
