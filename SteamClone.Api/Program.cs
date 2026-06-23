@@ -5,6 +5,7 @@ using SteamClone.Api.Data;
 using SteamClone.Api.Models;
 using System.Text;
 using SteamClone.Api.Repositories;
+using SteamClone.Api.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 // MongoDB Settings
@@ -77,6 +78,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 });
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Swagger
 if (app.Environment.IsDevelopment())
@@ -85,7 +87,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseExceptionHandler("/error");
+//app.UseExceptionHandler("/error");
+
 
 //app.UseHttpsRedirection();
 
