@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 using SteamClone.Api.Data;
 using SteamClone.Api.Models;
 using System.Text;
-
+using SteamClone.Api.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // MongoDB Settings
@@ -19,6 +19,7 @@ builder.Services.AddSingleton<GameService>();
 builder.Services.AddSingleton<LibraryService>();
 builder.Services.AddSingleton<ReviewService>();
 builder.Services.AddSingleton<WishlistService>();
+builder.Services.AddSingleton<GameRepository>();
 // Controllers
 builder.Services.AddControllers();
 
