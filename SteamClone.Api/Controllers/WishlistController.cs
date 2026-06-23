@@ -45,7 +45,7 @@ public class WishlistController : ControllerBase
             return BadRequest("You already own this game.");
         }
 
-        var alreadyInWishlist = await _wishlistService.ExistAsync(userId, gameId);
+        var alreadyInWishlist = await _wishlistService.ExistsAsync(userId, gameId);
 
         if (alreadyInWishlist)
         {
@@ -67,7 +67,7 @@ public class WishlistController : ControllerBase
             return Unauthorized();
         }
 
-        var wishlistItems = await _wishlistService.GetUserWhishlistAsync(userId);
+        var wishlistItems = await _wishlistService.GetUserWishlistAsync(userId);
         var games = new List<object>();
 
         foreach (var item in wishlistItems)
@@ -98,7 +98,7 @@ public class WishlistController : ControllerBase
             return Unauthorized();
         }
 
-        var exists = await _wishlistService.ExistAsync(userId, gameId);
+        var exists = await _wishlistService.ExistsAsync(userId, gameId);
         if (!exists)
         {
             return NotFound("Game not found in wishlist.");

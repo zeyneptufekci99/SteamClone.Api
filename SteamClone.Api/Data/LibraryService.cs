@@ -1,19 +1,20 @@
-﻿using MongoDB.Driver;
-using SteamClone.Api.Models;
+﻿using SteamClone.Api.Models;
+using SteamClone.Api.Repositories;
+
 namespace SteamClone.Api.Data;
 
 public class LibraryService
 {
-    private readonly IMongoCollection<UserGame> _userGames;
+    private readonly LibraryRepository _libraryRepository;
 
-    public LibraryService(MongoDbService db)
+    public LibraryService(LibraryRepository libraryRepository)
     {
-        _userGames = db.Database.GetCollection<UserGame>("UserGames");
+        _libraryRepository = libraryRepository;
     }
 
     public async Task<bool> HasGameAsync(string userId, string gameId)
     {
-        return await _userGames.Find(x=> x.UserId == userId && x.GameId == gameId).AnyAsync();
+        return await _libraryRepository.HasGameAsync(userId, gameId);
     }
 
     public async Task AddGameToLibraryAsync(string userId, string gameId)
@@ -25,12 +26,11 @@ public class LibraryService
             PurchasedDate = DateTime.UtcNow
         };
 
-        await _userGames.InsertOneAsync(userGame);
+        await _libraryRepository.AddGameToLibraryAsync(userGame);
     }
 
     public async Task<List<UserGame>> GetUserLibraryAsync(string userId)
     {
-        return await _userGames.Find(x => x.UserId == userId).ToListAsync();
+        return await _libraryRepository.GetUserLibraryAsync(userId);
     }
-
 }

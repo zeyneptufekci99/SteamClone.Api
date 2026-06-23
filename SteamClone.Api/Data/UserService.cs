@@ -1,35 +1,34 @@
-﻿using MongoDB.Driver;
-using SteamClone.Api.Models;
+﻿using SteamClone.Api.Models;
+using SteamClone.Api.Repositories;
 
 namespace SteamClone.Api.Data;
 
 public class UserService
 {
+    private readonly UserRepository _userRepository;
 
-    private readonly IMongoCollection<User> _user;
-
-    public UserService(MongoDbService db)
+    public UserService(UserRepository userRepository)
     {
-        _user = db.Database.GetCollection<User>("Users");
+        _userRepository = userRepository;
     }
 
     public async Task CreateAsync(User user)
     {
-        await _user.InsertOneAsync(user);
+        await _userRepository.CreateAsync(user);
     }
 
     public async Task<User?> GetByEmailAsync(string email)
     {
-        return await _user.Find(x=> x.Email == email).FirstOrDefaultAsync();
-    }
-
-    public async Task UpdateAsync(string id, User user)
-    {
-        await _user.ReplaceOneAsync(x => x.Id == id, user);
+        return await _userRepository.GetByEmailAsync(email);
     }
 
     public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
     {
-        return await _user.Find(x => x.RefreshToken == refreshToken).FirstOrDefaultAsync();
+        return await _userRepository.GetByRefreshTokenAsync(refreshToken);
+    }
+
+    public async Task UpdateAsync(string id, User user)
+    {
+        await _userRepository.UpdateAsync(id, user);
     }
 }

@@ -81,7 +81,7 @@ public class ReviewController: ControllerBase
     public async Task<IActionResult> GetSummary(string gameId)
     {
         var averageRating = await _reviewService.GetAverageRatingAsync(gameId);
-        var reviewCount = await _reviewService.GetReviewCount(gameId);
+        var reviewCount = await _reviewService.GetReviewCountAsync(gameId);
 
         return Ok(new GameReviewSummaryResponse
         {

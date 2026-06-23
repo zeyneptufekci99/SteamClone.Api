@@ -1,18 +1,20 @@
-﻿using MongoDB.Driver;
-using SteamClone.Api.Models;
+﻿using SteamClone.Api.Models;
+using SteamClone.Api.Repositories;
+
 namespace SteamClone.Api.Data;
 
 public class WishlistService
 {
-    private readonly IMongoCollection<WishlistItem> _wishlistItems;
+    private readonly WishlistRepository _wishlistRepository;
 
-    public WishlistService(MongoDbService db)
+    public WishlistService(WishlistRepository wishlistRepository)
     {
-        _wishlistItems = db.Database.GetCollection<WishlistItem>("WishlistItems");
+        _wishlistRepository = wishlistRepository;
     }
-    public async Task<bool> ExistAsync(string userId, string gameId) {
-    
-        return await _wishlistItems.Find(x=> x.UserId == userId && x.GameId == gameId).AnyAsync();
+
+    public async Task<bool> ExistsAsync(string userId, string gameId)
+    {
+        return await _wishlistRepository.ExistsAsync(userId, gameId);
     }
 
     public async Task AddAsync(string userId, string gameId)
@@ -24,16 +26,16 @@ public class WishlistService
             CreatedAt = DateTime.UtcNow
         };
 
-        await _wishlistItems.InsertOneAsync(item);
+        await _wishlistRepository.AddAsync(item);
     }
 
-    public async Task<List<WishlistItem>> GetUserWhishlistAsync(string userId)
+    public async Task<List<WishlistItem>> GetUserWishlistAsync(string userId)
     {
-        return await _wishlistItems.Find(x => x.UserId == userId).ToListAsync();
+        return await _wishlistRepository.GetUserWishlistAsync(userId);
     }
 
-   public async Task RemoveAsync(string userId, string gameId)
+    public async Task RemoveAsync(string userId, string gameId)
     {
-        await _wishlistItems.DeleteOneAsync(x=> x.UserId == userId && x.GameId == gameId);
+        await _wishlistRepository.RemoveAsync(userId, gameId);
     }
 }

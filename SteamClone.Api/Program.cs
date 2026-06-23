@@ -20,6 +20,10 @@ builder.Services.AddSingleton<LibraryService>();
 builder.Services.AddSingleton<ReviewService>();
 builder.Services.AddSingleton<WishlistService>();
 builder.Services.AddSingleton<GameRepository>();
+builder.Services.AddSingleton<UserRepository>();
+builder.Services.AddSingleton<LibraryRepository>();
+builder.Services.AddSingleton<ReviewRepository>();
+builder.Services.AddSingleton<WishlistRepository>();
 // Controllers
 builder.Services.AddControllers();
 
